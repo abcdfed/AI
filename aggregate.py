@@ -54,13 +54,6 @@ def split_pdf(infile, out_path):
                 writer.write(outfile)
             yield i
 
-            # try:
-            #     with open(out_file_name, 'wb') as outfile:
-            #          writer.write(outfile)
-            #     yield i
-            # except:
-            #     print("chucuole     "+ str(number))
-
 
 def turn_picture(in_File, out_Path):
     '''
@@ -104,14 +97,6 @@ def wipeOff255(temp):
             stop = 0
 
 
-    # stop = 1
-    # while stop:
-    #     b = temp[:, :1]
-    #     if b.sum() == temp.shape[1]*255:
-    #         temp = temp[:, 1:]
-    #     else:
-    #         stop = 0
-    #
 
     stop = 1
     while stop and temp.shape[0] > 130:
@@ -121,17 +106,6 @@ def wipeOff255(temp):
             number_bottom += 1
         else:
             stop = 0
-
-
-
-    # stop = 1
-    # while stop:
-    #     b = temp[:, temp.shape[1]-1:]
-    #     if b.sum() == temp.shape[1]*255:
-    #         temp = temp[1:, :temp.shape[1]-1]
-    #     else:
-    #         stop = 0
-
 
     temp = temp.T
 
@@ -218,29 +192,6 @@ def integration(a, b, image, clf):
     # print(x1, y1, x2, y2, x, y)
 
     score = 1
-    # 如果想计算合并出来的这个图片的效果，可以取消下面的注释
-
-    # temp2 = image[x: y]
-    # # print(temp2.shape)
-    # temp2, _, _ = wipeOff255(temp2)
-    # # print(temp2.shape)
-    # temp2 = cv2.resize(temp2, (700, 400))
-    # # cv2.imshow("aho", temp2)
-    # # cv2.waitKey(0)
-    # fd2 = hog(temp2,
-    #           orientations=9,  # number of bins
-    #           pixels_per_cell=(5, 5),   # pixel per cell
-    #           cells_per_block=(2, 2),   # cells per blcok
-    #           block_norm="L2",   # block norm : str {‘L1’, ‘L1-sqrt’, ‘L2’, ‘L2-Hys’}, optional
-    #           transform_sqrt=True,  # power law compression (also known as gamma correction)
-    #           feature_vector=True)  # flatten the final vectors
-    #
-    # fd2 = fd2.reshape(1, -1)
-    #
-    # score = clf.decision_function(fd2)
-    # # print(temp2.shape[0]+x)
-
-
     return (y-x, score, x)
 
 
@@ -269,13 +220,8 @@ def myNMS(detector, image, clf):
         loc = detector.index(i) + 1
         while loc < len(detector):
             if IOU(detector[loc][2], detector[loc][0], i[2], i[0]) > 0.6:
-                # print()
-                # print(detector[index], detector[index][0] + detector[index][2], "+")
-                # print(detector[loc], detector[loc][0]+detector[loc][2], '->')
                 detector[index] = integration(detector[index], detector[loc], image, clf)
-                # print(detector[index], detector[index][0]+detector[index][2])
                 del[detector[loc]]
-                # print()
             else:
                 loc += 1
 
@@ -345,7 +291,6 @@ def verticalSidingWindows(PathOfpic,
                 continue
             isAllwords = 0
             temp = cv2.resize(temp, (700, 400))
-            # cv2.imwrite('/home/zheng/Pictures/temp/a' + str(number) + '.jpg', temp)
             number += 1
             print("从", y, "start,高度为：", high, number)
             y += 25
@@ -365,26 +310,9 @@ def verticalSidingWindows(PathOfpic,
             score  = clf.decision_function(fd)
 
 
-            # if pred == 1:
-            #     flag = 0
-            #     if score > 0.9:
-            #         # detections.append((x, y, clf.decision_function(fd),#样本点到超平面的距离
-            #         #                    int(min_wdw_sz[0]*(downscale**scale)),
-            #         #                    int(min_wdw_sz[1]*(downscale**scale))))
-            #         # cd.append(detections[-1])
-            #         print('入围的哟：：：：：：：：：：：：', number)
-            #         flag = 1
-            #     if flag == 1:
-            #         cv2.imwrite('/home/zheng/Pictures/result/'+'H'+str(number)+'_'+str(score)+'.jpg', temp)
-            #     else:
-            #         cv2.imwrite('/home/zheng/Pictures/result/'+str(number)+'_'+str(score)+'.jpg', temp)
 
             if score > 0.8:
                 detector.append((hOfpic, score, yOfpic))
-                # detections.append((x, y, clf.decision_function(fd),#样本点到超平面的距离
-                #                    int(min_wdw_sz[0]*(downscale**scale)),
-                #                    int(min_wdw_sz[1]*(downscale**scale))))
-                # cd.append(detections[-1])
                 print('入围的哟：：：：：：：：：：：：', number)
                 cv2.imwrite('/home/zheng/Pictures/result/'+'H'+str(number)+'_'+str(score)+'.jpg', temp)
             if score > 0:
@@ -433,13 +361,6 @@ def detector(pathOfpic,
     '''
     im = cv2.imread(pathOfpic, 0)
 
-    # print(im.shape)
-    # print(type(im))
-    # cv2.imshow('imageaa', im)
-    # cv2.waitKey(0)
-    # print('33')
-
-    # im = imutils.resize(im, width=max(400, im.shape[1]))
     min_wdw_sz = (30, 75)
     step_size = (5, 5)
     downscale = 1.2
@@ -465,67 +386,12 @@ def detector(pathOfpic,
         number_plies += 1
         print('.................................  No.', number_plies)
         im_scaled = im_scaled_*255
-        # number_id += 1
-        # print(im_scaled.shape)
-        # print(type(im_scaled))
-        # cv2.imshow(str(number_id), im_scaled)
-        # cv2.waitKey(0)
-        # print('60')
-
-        # # 下面的送入ｈｏｇ　全都是０－１之间的数，这里检验一下元图像读取是正确
-        # number_0_255 = 0
-        # number___ = 0
-        # for i in im_scaled:
-        #     for j in i:
-        #         number___ += 1
-        #         if j <= 1:
-        #             number_0_255 += 1
-        # print('原来aaa的', number___, number_0_255)
-
-        # bbb = color.rgb2gray(im_scaled)
-        # imgaaaa = Image.fromarray(bbb)
-        # print(type(imgaaaa))
-        # global id
-        # id += 1
-        # imgaaaa = imgaaaa.convert('RGB')
-        # imgaaaa.save('/home/zheng/图片/result/'+ str(id) +'.jpg')
-
-        # This list contains detections at the current scale
         cd = []
-        # If the width or height of the scaled image is less than
-        # the width or height of the window, then end the iterations.
         if im_scaled.shape[0] < min_wdw_sz[1] or im_scaled.shape[1] < min_wdw_sz[0]:
             break
         for (x, y, im_window) in sliding_window(im_scaled,step_size, min_wdw_sz ):
             if im_window.shape[0] != min_wdw_sz[1] or im_window.shape[1] != min_wdw_sz[0]:
                 continue
-
-            # print(im_window.shape)
-
-            # 原来的三通道转一通道
-            # im_window = color.rgb2gray(im_window)
-
-            # number_0_255 = 0
-            # number___ = 0
-            # for i in im_window:
-            #     for j in i:
-            #         number___ += 1
-            #         if j<=1:
-            #             number_0_255 += 1
-            # print('zheshi', number___, number_0_255)
-            # return
-
-
-
-            # imgaaaa = Image.fromarray(im_window)
-            # print(type(imgaaaa))
-            # # global id
-            # id += 1
-            # imgaaaa = imgaaaa.convert('RGB')
-            # imgaaaa.save('/home/zheng/图片/result/'+ str(id) +'.jpg')
-
-
-
 
 
             # 计算每个窗口的Hog特征
@@ -563,30 +429,9 @@ def detector(pathOfpic,
                 else:
                     cv2.imwrite('/home/zheng/Pictures2/result/'+str(number_id)+'_'+str(score)+'.jpg', im_window)
 
-            # # 要检测那个照片：
-            # temp = im_window
-            # number_0_255 = 0
-            # number___ = 0
-            # for i in temp:
-            #     for j in i:
-            #         number___ += 1
-            #         if j <= 1:
-            #             number_0_255 += 1
             number_id += 1
             if number_id%1000 == 0:
                 print(number_id)
-
-            # if pred == 1:
-            #     # print('142', im_window.shape, number___, number_0_255, pred, number_id)
-            #     print('142', im_window.shape, pred, number_id)
-            #
-            #     # cv2.imshow(str(number_id), im_window)
-            #     # cv2.waitKey(0)
-            #
-            # #将每个滑窗的窗都保存下来
-            # if number_id%6 == 0 and pred is not 1:
-            #     cv2.imwrite('/home/zheng/Pictures2/temp/'+str(number_id)+'_'+str(score)+'.jpg', im_window)
-
 
         scale+=1
 
